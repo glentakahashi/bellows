@@ -1,3 +1,5 @@
+.gitignore
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -68,3 +70,7 @@ ENV/
 
 # Editor temp files
 .*.swp
+
+.eric6project/
+pybellows.e4p
+
