@@ -97,10 +97,7 @@ COMMANDS = {
     'pollHandler': (0x44, (), (t.EmberNodeId, )),
     'incomingSenderEui64Handler': (0x62, (), (t.EmberEUI64, )),
     'incomingMessageHandler': (0x45, (), (t.EmberIncomingMessageType, t.EmberApsFrame, t.uint8_t, t.int8s, t.EmberNodeId, t.uint8_t, t.uint8_t, t.LVBytes)),
-    # TODO: LVBytes in incomingRouteRecordHandler is really a list of
-    #       uint16_t - decoding this frame will be incorrect, since the length
-    #       refers to the number of items in the list
-    'incomingRouteRecordHandler': (0x59, (), (t.EmberNodeId, t.EmberEUI64, t.uint8_t, t.int8s, t.LVBytes)),
+    'incomingRouteRecordHandler': (0x59, (), (t.EmberNodeId, t.EmberEUI64, t.uint8_t, t.int8s, t.LVList(t.EmberNodeId))),
     'changeSourceRouteHandler': (0xC4, (), (t.EmberNodeId, t.EmberNodeId, t.Bool)),
     # TODO: LVBytes in setSourceRoute is really a list of uint16_t,
     #       serializing the frame will produce something the NCP will fail
