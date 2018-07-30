@@ -146,6 +146,7 @@ class Gateway(asyncio.Protocol):
     def error_frame_received(self, data):
         """Error frame receive handler"""
         LOGGER.debug("Error frame: %s", binascii.hexlify(data))
+        self.write(self._rst_frame())
 
     def write(self, data):
         """Send data to the uart"""
