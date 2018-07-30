@@ -138,6 +138,7 @@ class Gateway(asyncio.Protocol):
         if self._reset_future is None:
             LOGGER.warn("Reset future is None")
             return
+        self._application.version()
 
         # Make sure that the reset_future is not done
         if not self._reset_future.done():
