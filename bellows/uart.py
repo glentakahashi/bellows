@@ -45,6 +45,7 @@ class Gateway(asyncio.Protocol):
 
     def data_received(self, data):
         """Callback when there is data received from the uart"""
+        LOGGER.debug("Received data %s", data)
         # TODO: Fix this handling for multiple instances of the characters
         # If a Cancel Byte or Substitute Byte is received, the bytes received
         # so far are discarded. In the case of a Substitute Byte, subsequent
