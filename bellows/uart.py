@@ -64,6 +64,9 @@ class Gateway(asyncio.Protocol):
                 break
             self.frame_received(frame)
 
+    def eof_received(self):
+        LOGGER.debug("EOF received")
+
     def _extract_frame(self, data):
         """Extract a frame from the data buffer"""
         if self.FLAG in data:
