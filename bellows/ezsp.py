@@ -33,10 +33,13 @@ class EZSP:
         return self._gw.reset()
 
     def set_error_callback(self, cb):
+        LOGGER.debug("setting error callback")
         self.error_callback = cb
 
     def handle_error(self):
+        LOGGER.debug("Handling error")
         if self.error_callback is not None:
+            LOGGER.debug("Handling error2")
             self.error_callback()
 
     async def version(self):
