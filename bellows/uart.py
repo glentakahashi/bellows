@@ -31,6 +31,7 @@ class Gateway(asyncio.Protocol):
         self._rec_seq = 0
         self._buffer = b''
         self._application = application
+        self._reset_future = None
         self._connected_future = connected_future
         self._sendq = asyncio.Queue()
         self._pending = (-1, None)
@@ -133,6 +134,15 @@ class Gateway(asyncio.Protocol):
         # Only handle the frame, if it is a reply to our reset request
         if code is not t.NcpResetCode.RESET_SOFTWARE:
             return
+        
+        if self._reset_future is None:
+            LOGGER.warn("Reset future is None")
+            return
+        
+        # Make sure that the reset future is not done
+        if not self._reset_future.done():
+            self._reset_future.set_result(True)
+            self._reset_future = None
 
     def error_frame_received(self, data):
         """Error frame receive handler"""
@@ -150,7 +160,12 @@ class Gateway(asyncio.Protocol):
 
     def reset(self):
         """Sends a reset frame"""
+        if self._reset_future is not None:
+            raise TypeError("reset can only be called on a new connection")
+        
         self.write(self._rst_frame())
+        self._reset_future = asyncio.Future()
+        return self._reset_future
 
     async def _send_task(self):
         """Send queue handler"""
