@@ -14,7 +14,6 @@ import bellows.zigbee.util
 
 LOGGER = logging.getLogger(__name__)
 
-
 class ControllerApplication(zigpy.application.ControllerApplication):
 
     def __init__(self, ezsp, database_file=None):
@@ -22,13 +21,13 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         self._ezsp = ezsp
 
     async def startup(self, auto_form=False):
-        return self._ezsp.startup(auto_form)
+        return await self._ezsp.startup(auto_form)
 
     async def permit(self, time_s=60):
-        return self._ezsp.permit(time_s)
+        return await self._ezsp.permit(time_s)
 
     async def subscribe_group(self, group_id):
-        return self._ezsp.subscribe_group(group_id)
+        return await self._ezsp.subscribe_group(group_id)
 
     async def unsubscribe_group(self, group_id):
-        return self._ezsp.unsubscribe_group(group_id)
+        return await self._ezsp.unsubscribe_group(group_id)
