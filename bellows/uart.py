@@ -64,6 +64,9 @@ class Gateway(asyncio.Protocol):
                 break
             self.frame_received(frame)
 
+    def eof_received(self):
+        LOGGER.debug("EOF received")
+
     def _extract_frame(self, data):
         """Extract a frame from the data buffer"""
         if self.FLAG in data:
@@ -134,20 +137,20 @@ class Gateway(asyncio.Protocol):
         # Only handle the frame, if it is a reply to our reset request
         if code is not t.NcpResetCode.RESET_SOFTWARE:
             return
-        
+
         if self._reset_future is None:
             LOGGER.warn("Reset future is None")
             return
-        
-        # Make sure that the reset future is not done
+        self._application.version()
+
+        # Make sure that the reset_future is not done
         if not self._reset_future.done():
             self._reset_future.set_result(True)
-            self._reset_future = None
 
     def error_frame_received(self, data):
         """Error frame receive handler"""
         LOGGER.debug("Error frame: %s", binascii.hexlify(data))
-        self._application.startup()
+        self.write(self._rst_frame())
 
     def write(self, data):
         """Send data to the uart"""
@@ -160,9 +163,10 @@ class Gateway(asyncio.Protocol):
 
     def reset(self):
         """Sends a reset frame"""
+        # TODO: It'd be nice to delete self._reset_future.
         if self._reset_future is not None:
             raise TypeError("reset can only be called on a new connection")
-        
+
         self.write(self._rst_frame())
         self._reset_future = asyncio.Future()
         return self._reset_future
