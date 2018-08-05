@@ -43,7 +43,9 @@ class EZSP:
             LOGGER.debug("Handling error2")
             self._error_future = asyncio.Future()
             self._error_future.add_done_callback(self._finish_error)
-            self._error_callback(self._error_future)
+            asyncio.ensure_future(self._error_callback(self._error_future))
+            loop = asyncio.get_running_loop()
+            loop.run_until_complete(self._error_future)
     
     def _finish_error(self):
         self._error_future = None
