@@ -141,16 +141,16 @@ class Gateway(asyncio.Protocol):
         if self._reset_future is None:
             LOGGER.warn("Reset future is None")
             return
-        self._application.version()
 
         # Make sure that the reset_future is not done
         if not self._reset_future.done():
             self._reset_future.set_result(True)
+            self._reset_future = None
 
     def error_frame_received(self, data):
         """Error frame receive handler"""
         LOGGER.debug("Error frame: %s", binascii.hexlify(data))
-        self.write(self._rst_frame())
+        self._application.handle_error()
 
     def write(self, data):
         """Send data to the uart"""

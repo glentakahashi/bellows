@@ -21,6 +21,7 @@ class EZSP:
         self._gw = None
         self._awaiting = {}
         self.COMMANDS_BY_ID = {}
+        self.error_callback = None
         for name, details in self.COMMANDS.items():
             self.COMMANDS_BY_ID[details[0]] = (name, details[1], details[2])
 
@@ -30,6 +31,13 @@ class EZSP:
 
     def reset(self):
         return self._gw.reset()
+
+    def set_error_callback(self, cb):
+        self.error_callback = cb
+
+    def handle_error(self):
+        if self.error_callback is not None:
+            self.error_callback()
 
     async def version(self):
         version = self.ezsp_version

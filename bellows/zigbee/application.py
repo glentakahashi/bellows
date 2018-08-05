@@ -80,6 +80,7 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         self._ieee = ieee[0]
 
         e.add_callback(self.ezsp_callback_handler)
+        e.set_error_callback(self.setup)
 
         await self._read_multicast_table()
 
