@@ -21,6 +21,7 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         self._ezsp = ezsp
 
     async def startup(self, auto_form=False):
+        LOGGER.debug("gtak starting up")
         return self._ezsp.startup(auto_form)
 
     async def permit(self, time_s=60):
