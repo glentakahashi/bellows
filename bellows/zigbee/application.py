@@ -28,7 +28,9 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         """Perform basic NCP initialization steps"""
         e = self._ezsp
 
+        LOGGER.debug("gtak init start")
         await e.reset()
+        LOGGER.debug("gtak version")
         await e.version()
 
         c = t.EzspConfigId
@@ -50,12 +52,15 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         await self._cfg(c.CONFIG_END_DEVICE_POLL_TIMEOUT_SHIFT, 6)
         await self._cfg(c.CONFIG_APS_UNICAST_MESSAGE_COUNT, 20)
         await self._cfg(c.CONFIG_PACKET_BUFFER_COUNT, 0xff)
+        LOGGER.debug("gtak init stop")
 
     async def startup(self, auto_form=False):
         """Perform a complete application startup"""
+        LOGGER.debug("gtak starting up")
         await self.initialize()
         e = self._ezsp
 
+        LOGGER.debug("gtak network init")
         v = await e.networkInit()
         if v[0] != t.EmberStatus.SUCCESS:
             if not auto_form:
@@ -73,6 +78,7 @@ class ControllerApplication(zigpy.application.ControllerApplication):
             await asyncio.sleep(1)  # TODO
             await self.form_network()
 
+        LOGGER.debug("gtak networked")
         await self._policy()
         nwk = await e.getNodeId()
         self._nwk = nwk[0]
@@ -81,8 +87,10 @@ class ControllerApplication(zigpy.application.ControllerApplication):
 
         e.add_callback(self.ezsp_callback_handler)
         e.set_error_callback(self.startup)
+        LOGGER.debug("gtak error callback")
 
         await self._read_multicast_table()
+        LOGGER.debug("gtak startup done")
 
     async def form_network(self, channel=15, pan_id=None, extended_pan_id=None):
         channel = t.uint8_t(channel)
