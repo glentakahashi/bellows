@@ -232,14 +232,18 @@ class EZSP:
 
     async def startup(self, auto_form=False):
         """Perform a complete application startup"""
+        LOGGER.debug("gtak initialize")
         await self.initialize()
 
+        LOGGER.debug("gtak network init start")
         v = await self.networkInit()
+        LOGGER.debug("gtak network init finish")
         if v[0] != t.EmberStatus.SUCCESS:
             if not auto_form:
                 raise Exception("Could not initialize network")
             await self.form_network()
 
+        LOGGER.debug("gtak network params")
         v = await self.getNetworkParameters()
         assert v[0] == t.EmberStatus.SUCCESS  # TODO: Better check
         if v[1] != t.EmberNodeType.COORDINATOR:
@@ -260,6 +264,7 @@ class EZSP:
         self.add_callback(self.ezsp_callback_handler)
 
         await self._read_multicast_table()
+        LOGGER.debug("gtak Finished setup")
 
     async def form_network(self, channel=15, pan_id=None, extended_pan_id=None):
         channel = t.uint8_t(channel)
