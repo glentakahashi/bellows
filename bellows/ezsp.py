@@ -21,7 +21,8 @@ class EZSP:
         self._gw = None
         self._awaiting = {}
         self.COMMANDS_BY_ID = {}
-        self.error_callback = None
+        self._error_callback = None
+        self._error_future = None
         for name, details in self.COMMANDS.items():
             self.COMMANDS_BY_ID[details[0]] = (name, details[1], details[2])
 
@@ -34,13 +35,18 @@ class EZSP:
 
     def set_error_callback(self, cb):
         LOGGER.debug("setting error callback")
-        self.error_callback = cb
+        self._error_callback = cb
 
-    def handle_error(self):
+    def _handle_error(self):
         LOGGER.debug("Handling error")
-        if self.error_callback is not None:
+        if self._error_callback is not None and self._error_future is None:
             LOGGER.debug("Handling error2")
-            self.error_callback()
+            self._error_future = asyncio.Future()
+            self._error_future.add_done_callback(self._finish_error)
+            self._error_callback(self._error_future)
+    
+    def _finish_error(self):
+        self._error_future = None
 
     async def version(self):
         version = self.ezsp_version

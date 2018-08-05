@@ -23,6 +23,7 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         self._ezsp = ezsp
         self._pending = {}
         self._multicast_table = {}
+        self._ezsp.set_error_callback(self._handle_error)
 
     async def initialize(self):
         """Perform basic NCP initialization steps"""
@@ -86,11 +87,15 @@ class ControllerApplication(zigpy.application.ControllerApplication):
         self._ieee = ieee[0]
 
         e.add_callback(self.ezsp_callback_handler)
-        e.set_error_callback(self.startup)
-        LOGGER.debug("gtak error callback")
 
         await self._read_multicast_table()
         LOGGER.debug("gtak startup done")
+    
+    async def _handle_error(self, fut):
+        LOGGER.debug("gtak Handling error in app")
+        await self.startup()
+        LOGGER.debug("gtak startup finished")
+        fut.set_result(True)
 
     async def form_network(self, channel=15, pan_id=None, extended_pan_id=None):
         channel = t.uint8_t(channel)
