@@ -22,13 +22,16 @@ class ControllerApplication(zigpy.application.ControllerApplication):
 
     async def startup(self, auto_form=False):
         LOGGER.debug("gtak starting up")
-        return self._ezsp.startup(auto_form)
+        await self._ezsp.startup(auto_form)
 
     async def permit(self, time_s=60):
-        return self._ezsp.permit(time_s)
+        result = await self._ezsp.permit(time_s)
+        return result
 
     async def subscribe_group(self, group_id):
-        return self._ezsp.subscribe_group(group_id)
+        result = await self._ezsp.subscribe_group(group_id)
+        return result
 
     async def unsubscribe_group(self, group_id):
-        return self._ezsp.unsubscribe_group(group_id)
+        result = await self._ezsp.unsubscribe_group(group_id)
+        return result
