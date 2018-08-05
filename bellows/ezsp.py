@@ -175,7 +175,7 @@ class EZSP:
 
         if sequence in self._awaiting:
             expected_id, schema, future = self._awaiting.pop(sequence)
-            assert expected_id == frame_id
+            assert expected_id == frame_id, "Expected frame %s got frame %s" % (expected_id, frame_id)
             result, data = t.deserialize(data, schema)
             future.set_result(result)
         else:
