@@ -44,7 +44,7 @@ class EZSP:
             self._error_future = asyncio.Future()
             self._error_future.add_done_callback(self._finish_error)
             asyncio.ensure_future(self._error_callback(self._error_future))
-            loop = asyncio.get_running_loop()
+            loop = asyncio.get_event_loop()
             loop.run_until_complete(self._error_future)
     
     def _finish_error(self):
